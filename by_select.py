@@ -1,7 +1,7 @@
 import json
 import time
 import datetime
-from utils.bySelector import Selector, standardAppSign
+from utils.by_selector import Selector, standard_app_sign
 
 
 def get_user_profile():
@@ -34,12 +34,12 @@ def history_chosen_course_query():
 
 def check_frontend_sign():
     sign = Selector().get_frontend_sign()
-    if sign['sign'] == standardAppSign['sign']:
+    if sign['sign'] == standard_app_sign['sign']:
         print('MD5 检测通过，API 在掌握中')
     else:
         print('Warning: MD5 检测未通过，API 可能已被修改')
         print('标准 MD5:')
-        print(json.dumps(standardAppSign, indent=4, ensure_ascii=False))
+        print(json.dumps(standard_app_sign, indent=4, ensure_ascii=False))
         print('当前 MD5:')
         print(json.dumps(sign, indent=4, ensure_ascii=False))
 

@@ -1,4 +1,5 @@
 import requests
+import requests.utils
 from utils.userInfo import get_user_info
 
 

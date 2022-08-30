@@ -10,8 +10,8 @@ def get_user_info():
         """
         config.json：
             共计两个字段
-            username 为用户名的 base64 加密结果
-            password 为用户密码的 base64 加密结果
+            username 为用户名的 base64 编码结果
+            password 为用户密码的 base64 编码结果
         """
         with open('./authorization/config.json', 'r') as file:
             content = json.loads(file.read())

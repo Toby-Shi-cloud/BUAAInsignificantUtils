@@ -1,7 +1,7 @@
 import re
 import json
 import requests
-from authorization.appLogin import app_login
+from authorization.app_login import app_login
 
 if __name__ == '__main__':
     result = {}

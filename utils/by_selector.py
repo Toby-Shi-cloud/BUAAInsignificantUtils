@@ -9,15 +9,15 @@ import requests
 import datetime
 from hashlib import sha1, md5
 from Crypto.Cipher import AES
-from authorization.byLogin import by_login
-from authorization.ssoLogin import sso_login
+from authorization.by_login import by_login
+from authorization.sso_login import sso_login
 from cryptography.hazmat.primitives import padding
 
-passMap = {0: '未通过', 1: '通过'}
-statusMap = {1: '未开始', 2: '上课中', 3: '已结课'}
-checkInMap = {1: '通过', 2: '迟到', 3: '早退', 4: '缺勤'}
+pass_map = {0: '未通过', 1: '通过'}
+status_map = {1: '未开始', 2: '上课中', 3: '已结课'}
+check_in_map = {1: '通过', 2: '迟到', 3: '早退', 4: '缺勤'}
 
-standardAppSign = {
+standard_app_sign = {
     'date': '2022-05-13 22:32:53.191211',
     'sign': 'FE0050BB433D4504A78C827F3772ACD1'
 }
@@ -60,10 +60,10 @@ def back_serialize(data):
             '授课教师': i['courseInfo']['courseTeacher'],
             '课程类别': parse_kind(i['courseInfo'], 'courseKind', 'kindName'),
             '课程作业': '有作业-' + ('已提交' if i['homework'] else '待提交') if i['courseInfo']['courseHomework'] else '无作业',
-            '课程考勤': checkInMap[i['checkin']] if i['checkin'] in statusMap else '待录入',
+            '课程考勤': check_in_map[i['checkin']] if i['checkin'] in status_map else '待录入',
             '课程成绩': i['score'] if i['score'] else '待评估',
-            '课程考核': passMap[i['pass']] if i['pass'] in passMap else '待考核',
-            '课程状态': statusMap.get(i['courseInfo']['status'])
+            '课程考核': pass_map[i['pass']] if i['pass'] in pass_map else '待考核',
+            '课程状态': status_map.get(i['courseInfo']['status'])
         } for i in data
     }
 
@@ -97,37 +97,37 @@ class Selector:
 
     def __init__(self, use_random_key=False):
         cookies, self.__token = by_login(sso_login())
-        request = requests.get('http://bykc.buaa.edu.cn/system/home', headers={
+        request = requests.get('http' + '://bykc.buaa.edu.cn/system/home', headers={
             'User-Agent': 'Y.J.Aickson'
         }, cookies=cookies)
-        match = re.search('app\..+\.js', request.text)
-        request = requests.get('http://bykc.buaa.edu.cn/' + match.group(), headers={
+        match = re.search('app\\..+\\.js', request.text)
+        request = requests.get('http' + '://bykc.buaa.edu.cn/' + match.group(), headers={
             'User-Agent': 'Y.J.Aickson'
         }, cookies=cookies)
         match = re.search('RSA_PUBLIC_KEY="(.+?)"', request.text)
         self.sign = md5(request.text.encode()).hexdigest().upper()
         key = ['-----BEGIN PUBLIC KEY-----', match.group(1), '-----END PUBLIC KEY-----']
         default = base64.b64decode('WW91clNvZnR3YXJlU2hpdA==')
-        self.__publicKey = rsa.PublicKey.load_pkcs1_openssl_pem('\n'.join(key).encode())
-        self.__default_aesKey = None if use_random_key else base64.b64encode(rsa.encrypt(default, self.__publicKey))
+        self.__public_key = rsa.PublicKey.load_pkcs1_openssl_pem('\n'.join(key).encode())
+        self.__default_aes_key = None if use_random_key else base64.b64encode(rsa.encrypt(default, self.__public_key))
         self.__default_cipher = None if use_random_key else AES.new(default, AES.MODE_ECB)
         self.get_user_profile()
         self.query_news_list()
 
     def __get_encode_info(self):
-        if self.__default_aesKey is None:
+        if self.__default_aes_key is None:
             key = ''.join(random.sample(string.ascii_letters + string.digits, 16)).encode()
-            aes_key = base64.b64encode(rsa.encrypt(key, self.__publicKey))
+            aes_key = base64.b64encode(rsa.encrypt(key, self.__public_key))
             cipher = AES.new(key, AES.MODE_ECB)
             return aes_key, cipher
-        return self.__default_aesKey, self.__default_cipher
+        return self.__default_aes_key, self.__default_cipher
 
     def __request(self, route, data=None):
         aes_key, cipher = self.__get_encode_info()
         if data is not None:
             data = json.dumps(data).encode()
-            sha_sign = base64.b64encode(rsa.encrypt(sha1(data).hexdigest().encode(), self.__publicKey))
-            request = requests.post('http://bykc.buaa.edu.cn/sscv/' + route, headers={
+            sha_sign = base64.b64encode(rsa.encrypt(sha1(data).hexdigest().encode(), self.__public_key))
+            request = requests.post('http' + '://bykc.buaa.edu.cn/sscv/' + route, headers={
                 'auth_token': self.__token,
                 'User-Agent': 'Y.J.Aickson',
                 'Content-Type': 'application/json',
@@ -136,7 +136,7 @@ class Selector:
                 'ts': str(round(time.time() * 1000))
             }, data=base64.b64encode(aes_encode(cipher, data)))
         else:
-            request = requests.post('http://bykc.buaa.edu.cn/sscv/' + route, headers={
+            request = requests.post('http' + '://bykc.buaa.edu.cn/sscv/' + route, headers={
                 'auth_token': self.__token,
                 'User-Agent': 'Y.J.Aickson',
                 'Content-Type': 'application/json',

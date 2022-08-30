@@ -1,4 +1,5 @@
 import requests
+import requests.utils
 from bs4 import BeautifulSoup
 from utils.userInfo import get_user_info
 
