@@ -4,6 +4,18 @@ import datetime
 from utils.by_selector import Selector, standard_app_sign
 
 
+def check_frontend_sign():
+    sign = Selector().get_frontend_sign()
+    if sign['sign'] == standard_app_sign['sign']:
+        print('MD5 检测通过，API 在掌握中')
+    else:
+        print('Warning: MD5 检测未通过，API 可能已被修改')
+        print('标准 MD5:')
+        print(json.dumps(standard_app_sign, indent=4, ensure_ascii=False))
+        print('当前 MD5:')
+        print(json.dumps(sign, indent=4, ensure_ascii=False))
+
+
 def get_user_profile():
     print(json.dumps(Selector().get_user_profile(), indent=4, ensure_ascii=False))
 
@@ -30,18 +42,6 @@ def current_chosen_course_query():
 
 def history_chosen_course_query():
     print(json.dumps(Selector().history_chosen_course_query(), indent=4, ensure_ascii=False))
-
-
-def check_frontend_sign():
-    sign = Selector().get_frontend_sign()
-    if sign['sign'] == standard_app_sign['sign']:
-        print('MD5 检测通过，API 在掌握中')
-    else:
-        print('Warning: MD5 检测未通过，API 可能已被修改')
-        print('标准 MD5:')
-        print(json.dumps(standard_app_sign, indent=4, ensure_ascii=False))
-        print('当前 MD5:')
-        print(json.dumps(sign, indent=4, ensure_ascii=False))
 
 
 def select(cid):
@@ -111,6 +111,7 @@ def super_select(cid):
 
 
 if __name__ == '__main__':
+    check_frontend_sign()
     # get_user_profile()
     # query_news_list()
     # fore_course_query()
@@ -118,7 +119,6 @@ if __name__ == '__main__':
     # unselectable_course_query()
     # current_chosen_course_query()
     # history_chosen_course_query()
-    # check_frontend_sign()
     # unselect(114514)
     # select(114514)
     # super_select(114514)

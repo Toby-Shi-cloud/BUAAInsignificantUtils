@@ -18,6 +18,6 @@ def sso_login():
     }, allow_redirects=False)
     cookies = requests.utils.dict_from_cookiejar(session.cookies)
     if len(cookies) == 0:
-        print('^^^ sso login failed ^^^')
+        print('error: sso login failed')
         exit(0)
     return cookies

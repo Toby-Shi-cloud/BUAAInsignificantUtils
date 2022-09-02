@@ -70,11 +70,6 @@
 - `select`: 提供一个 id，立即选择 id 对应的课程直到成功或被手动终止，适用于当前可选择的课程
 - `super_select`: 提供一个 id，智能选择 id 对应的课程，可自动停止，适用于预告的课程
 
-随机请求秘钥:
-
-- 在实例化`Selector`对象时通过`use_random_key`启动随机请求秘钥
-- 默认不启动随机请求秘钥，以此省去 AES 轮秘钥生成的时间
-
 旧版查询接口:
 
 - 目前博雅系统通过`queryStudentSemesterCourseByPage`接口统一获取课程信息，但此前用于获取课程预告和可选课程的`queryForeCourse`和`querySelectableCourse`接口仍然存在
