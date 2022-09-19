@@ -34,7 +34,6 @@ def load_time(info):
 
 
 class Selector:
-    __try_query_times, __try_select_times, __try_unselect_times = 10, 1, 1
 
     """
     如果设置了 fast_mode，将尽可能优化性能，如：
@@ -42,6 +41,8 @@ class Selector:
         使用更短的 User Agent 以减少请求长度
         使用固定的 AES 秘钥以节省轮秘钥生成时间
     """
+
+    __try_query_times, __try_select_times, __try_unselect_times = 10, 1, 1
 
     def __init__(self, fast_mode=True):
         cookies, self.__token = by_login(sso_login())
